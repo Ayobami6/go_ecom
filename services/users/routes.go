@@ -39,7 +39,6 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	var payload types.RegisterUserPayLoad
 	if err := utils.ParseJSON(r, &payload); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
-
 	}
 	// validate
 	if err := utils.Validate.Struct(payload); err != nil {
@@ -48,7 +47,7 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, err := h.store.GetUserByEmail(payload.Email)
-	if err != nil {
+	if err == nil {
         utils.WriteError(w, http.StatusConflict, errors.New("user with this email already exists"))
         return
     }

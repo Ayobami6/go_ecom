@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	db, err := db.NewSQLStorage(mysql.Config{
+	DB, err := db.NewSQLStorage(mysql.Config{
 		User:   config.Envs.DBUser,
         Passwd: config.Envs.DBPasswd,
         DBName:     config.Envs.DBName,
@@ -23,8 +23,8 @@ func main() {
 	if err!= nil {
         log.Fatal(err)
     }
-	initStorage(db)
-	server := api.NewAPIServer("localhost:5000", nil)
+	initStorage(DB)
+	server := api.NewAPIServer("localhost:5000", DB)
 
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
