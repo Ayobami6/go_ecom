@@ -4,8 +4,8 @@ build:
 test:
 	@go test -v ./...
 
-run: build
-	@./bin/go_ecom
+run:
+	@air
 
 migration:
 	@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))
