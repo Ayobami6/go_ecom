@@ -11,6 +11,7 @@ type UserStore interface {
 
 type ProductStore interface {
 	GetProducts() ([]*Product, error)
+	CreateProduct(product *Product) (*Product, error)
 }
 
 
@@ -20,7 +21,7 @@ type Product struct {
 	Description string `json:"description"`
 	Price       float64 `json:"price"`
 	Quantity    int    `json:"quantity"`
-	Image    string `json:"image"`
+	// Image    string `json:"image"`
 	CreatedAt time.Time `json:"createdAt"`
 }
 type User struct {
@@ -42,4 +43,12 @@ type RegisterUserPayLoad struct {
 type LoginUserPayLoad struct {
 	Email     string `json:"email" validate:"required,email"`
 	Password  string `json:"password" validate:"required"`
+}
+
+type ProductCreatePayLoad struct {
+	Name        string `json:"name" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	Price       float64 `json:"price" validate:"required"`
+	Quantity    int    `json:"quantity" validate:"required"`
+	// Image    string `json:"image"`
 }
