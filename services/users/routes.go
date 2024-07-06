@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/Ayobami6/go_ecom/config"
 	"github.com/Ayobami6/go_ecom/services/auth"
 	types "github.com/Ayobami6/go_ecom/types"
 	"github.com/Ayobami6/go_ecom/utils"
@@ -31,7 +32,38 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
+	var payload types.LoginUserPayLoad
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+	}
+	// validate
+	if err := utils.Validate.Struct(payload); err != nil {
+		errs := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, errs)
+		return
+	}
     //... implement login logic here
+	u, err := h.store.GetUserByEmail(payload.Email)
+	if err != nil {
+		utils.WriteError(w, http.StatusUnauthorized, errors.New("invalid email or password"))
+        return
+    }
+
+	// check password hashed password match
+	if !auth.CheckPassword(u.Password, []byte(payload.Password)) {
+        utils.WriteError(w, http.StatusUnauthorized, errors.New("invalid email or password"))
+        return
+    }
+	secret := []byte(config.Envs.JWTSecret)
+    token, err := auth.CreateJWT(secret, u.ID)
+    if err!= nil {
+        utils.WriteError(w, http.StatusInternalServerError, err)
+        return
+    }
+    utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
+    //... implement token generation and send it to the client
+
+
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {

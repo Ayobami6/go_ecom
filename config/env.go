@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -13,6 +14,8 @@ type Config struct {
 	DBPasswd  string
 	DBName    string
 	DBAddress string
+	JWTExpiration string
+	JWTSecret string
 }
 
 
@@ -26,6 +29,8 @@ func initConfig() Config {
         DBPasswd:  getEnv("DB_PASSWD", "root"),
         DBName:    getEnv("DB_NAME", "go_ecom"),
         DBAddress: getEnv("DB_ADDRESS", "127.0.0.1:3306"),
+		JWTExpiration: getEnv("JWT_EXPIRATION", strconv.Itoa(3600 * 24 * 7)),
+		JWTSecret: getEnv("JWT_SECRET", "secret"),
 	}
 }
 
